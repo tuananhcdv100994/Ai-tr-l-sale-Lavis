@@ -1,0 +1,5 @@
+{
+  "name": "AI Sales Assistant",
+  "description": "An AI-powered assistant that learns from uploaded documents to automate repetitive tasks for sales teams, such as generating product labels and quotes.",
+  "requestFramePermissions": []
+}
