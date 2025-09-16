@@ -19,7 +19,13 @@ const App: React.FC = () => {
     // Load learned mappings from local storage on initial load
     const storedMappings = localStorage.getItem('ai-sales-assistant-mappings');
     if (storedMappings) {
-      setLearnedMappings(JSON.parse(storedMappings));
+      try {
+        setLearnedMappings(JSON.parse(storedMappings));
+      } catch (error) {
+        console.error("Failed to parse learned mappings from localStorage:", error);
+        // If parsing fails, clear the invalid data to prevent future errors
+        localStorage.removeItem('ai-sales-assistant-mappings');
+      }
     }
   }, []);
 

@@ -1,11 +1,18 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-if (!process.env.API_KEY) {
-  throw new Error("API_KEY environment variable not set");
-}
+let ai: GoogleGenAI | null = null;
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const getAiClient = (): GoogleGenAI => {
+  if (!ai) {
+    if (!process.env.API_KEY) {
+      throw new Error("API_KEY environment variable not set. Please configure it to use the AI features.");
+    }
+    ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  }
+  return ai;
+};
+
 
 // A helper to build a JSON schema dynamically based on the fields the user has edited before.
 const buildDynamicSchema = (fields: string[]) => {
@@ -42,7 +49,8 @@ export async function generateDocumentData(userInput: string, fieldsToExtract: s
 `;
 
   try {
-    const response = await ai.models.generateContent({
+    const client = getAiClient();
+    const response = await client.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: { parts: [{ text: `Dựa vào văn bản sau: "${userInput}", hãy trích xuất thông tin để điền vào các trường đã biết.` }] },
       config: {
@@ -57,6 +65,10 @@ export async function generateDocumentData(userInput: string, fieldsToExtract: s
   } catch (err)
  {
     console.error("Lỗi khi gọi Gemini API:", err);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    if (errorMessage.includes("API_KEY")) {
+        return { error: "Lỗi cấu hình: API Key cho dịch vụ AI chưa được thiết lập. Vui lòng liên hệ quản trị viên." };
+    }
     return { error: "Xin lỗi, tôi đã gặp sự cố kỹ thuật khi trích xuất dữ liệu. Phản hồi của AI có thể không hợp lệ. Vui lòng thử diễn đạt lại yêu cầu của bạn." };
   }
 }
@@ -66,7 +78,8 @@ export async function getGeneralResponse(userInput: string): Promise<{ text: str
     const systemInstruction = `Bạn là một trợ lý AI chuyên nghiệp, hữu ích và tận tình. Bạn có thể trò chuyện với người dùng về nhiều chủ đề, trả lời các câu hỏi và hỗ trợ các công việc của họ. Khi câu hỏi của người dùng liên quan đến sự kiện gần đây hoặc cần thông tin cập nhật, hãy sử dụng công cụ tìm kiếm. Khi cung cấp thông tin từ tìm kiếm, hãy trả lời một cách tự tin và trích dẫn các nguồn của bạn.`;
 
     try {
-        const response = await ai.models.generateContent({
+        const client = getAiClient();
+        const response = await client.models.generateContent({
             model: "gemini-2.5-flash",
             contents: { parts: [{ text: userInput }] },
             config: {
@@ -84,6 +97,10 @@ export async function getGeneralResponse(userInput: string): Promise<{ text: str
         return { text, sources };
     } catch (err) {
         console.error("Lỗi khi gọi Gemini API cho phản hồi chung:", err);
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        if (errorMessage.includes("API_KEY")) {
+            return { text: "Lỗi cấu hình: API Key cho dịch vụ AI chưa được thiết lập. Vui lòng liên hệ quản trị viên để khắc phục sự cố này.", sources: [] };
+        }
         return { text: "Xin lỗi, tôi không thể xử lý yêu cầu của bạn lúc này. Vui lòng thử lại sau.", sources: [] };
     }
 }
