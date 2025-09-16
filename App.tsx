@@ -2,9 +2,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ChatWindow } from './components/ChatWindow';
 import { DocumentEditor } from './components/DocumentEditor';
-import { BotIcon } from './components/icons';
 import { Template, DocumentData, LearnedMappings } from './types';
 import { TEMPLATES } from './data/templates';
+import { logoUrl } from './assets/logo';
+
 
 type AppMode = 'chat' | 'edit';
 
@@ -35,7 +36,7 @@ const App: React.FC = () => {
       if (editedFields.length > 0) {
         const newMappings = {
           ...learnedMappings,
-          [selectedTemplate.id]: editedFields,
+          [selectedTemplate.id]: Array.from(new Set([...(learnedMappings[selectedTemplate.id] || []), ...editedFields])),
         };
         setLearnedMappings(newMappings);
         localStorage.setItem('ai-sales-assistant-mappings', JSON.stringify(newMappings));
@@ -53,14 +54,11 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center p-4 sm:p-6 lg:p-8">
-      <header className="flex items-center mb-6">
-        <div className="bg-indigo-600 p-2 rounded-lg mr-3">
-          <BotIcon className="w-8 h-8 text-white" />
-        </div>
-        <h1 className="text-3xl font-bold text-gray-800">Trợ lý AI cho sale Lavis</h1>
+    <div className="min-h-screen bg-gray-900 text-gray-200 flex flex-col items-center p-2 sm:p-4 md:p-6">
+      <header className="flex items-center justify-center mb-6 w-full max-w-6xl">
+        <img src={logoUrl} alt="Lavis Coating Logo" className="h-12 mr-4"/>
       </header>
-      <main className="w-full max-w-6xl mx-auto h-[calc(100vh-120px)]">
+      <main className="w-full max-w-6xl mx-auto h-[calc(100vh-110px)]">
         {mode === 'chat' && (
           <ChatWindow
             templates={TEMPLATES}

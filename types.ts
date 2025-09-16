@@ -46,4 +46,5 @@ export interface ChatMessage {
   templateSelection?: Template[];
   onTemplateSelect?: (template: Template) => void;
   generatedDocument?: GeneratedDocument;
+  sources?: { uri: string; title: string; }[];
 }

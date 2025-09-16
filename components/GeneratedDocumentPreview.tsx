@@ -24,14 +24,14 @@ export const GeneratedDocumentPreview: React.FC<{ document: GeneratedDocument }>
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm w-full max-w-2xl mt-2">
-      <h3 className="text-lg font-bold text-gray-800 mb-2">Tài liệu đã sẵn sàng</h3>
-      <p className="text-sm text-gray-600 mb-4">
+    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 shadow-sm w-full max-w-2xl mt-2">
+      <h3 className="text-lg font-bold text-gray-200 mb-2">Tài liệu đã sẵn sàng</h3>
+      <p className="text-sm text-gray-400 mb-4">
         Một tài liệu dựa trên mẫu "{template.name}" đã được tạo.
       </p>
       
       {/* Scaled-down visible preview */}
-      <div className="border rounded-md overflow-hidden bg-gray-100 p-2">
+      <div className="border rounded-md overflow-hidden bg-gray-600 p-2">
         <div className="transform scale-50 -translate-x-1/4 origin-top-left" style={{ width: '200%', height: '200%' }}>
             <div className="w-[210mm]">
                 <TemplateComponent data={data} interactive={false} />
