@@ -5,10 +5,13 @@ let ai: GoogleGenAI | null = null;
 
 const getAiClient = (): GoogleGenAI => {
   if (!ai) {
-    if (!process.env.API_KEY) {
-      throw new Error("API_KEY environment variable not set. Please configure it to use the AI features.");
+    // FIX: Per coding guidelines, the API key must be obtained from process.env.API_KEY.
+    // This also resolves the TypeScript error "Property 'env' does not exist on type 'ImportMeta'".
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+      throw new Error("API_KEY environment variable not set.");
     }
-    ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    ai = new GoogleGenAI({ apiKey: apiKey });
   }
   return ai;
 };
