@@ -5,13 +5,9 @@ let ai: GoogleGenAI | null = null;
 
 const getAiClient = (): GoogleGenAI => {
   if (!ai) {
-    // FIX: Per coding guidelines, the API key must be obtained from process.env.API_KEY.
-    // This also resolves the TypeScript error "Property 'env' does not exist on type 'ImportMeta'".
-    const apiKey = process.env.API_KEY;
-    if (!apiKey) {
-      throw new Error("API_KEY environment variable not set.");
-    }
-    ai = new GoogleGenAI({ apiKey: apiKey });
+    // API key provided by the user to make the application functional.
+    const apiKey = "AIzaSyDzMOeUW-zDXSeejjr4y6NT23ZOj_BHd2Y";
+    ai = new GoogleGenAI({ apiKey });
   }
   return ai;
 };
@@ -70,7 +66,7 @@ export async function generateDocumentData(userInput: string, fieldsToExtract: s
     console.error("Lỗi khi gọi Gemini API:", err);
     const errorMessage = err instanceof Error ? err.message : String(err);
     if (errorMessage.includes("API_KEY")) {
-        return { error: "Lỗi cấu hình: API Key cho dịch vụ AI chưa được thiết lập. Vui lòng liên hệ quản trị viên." };
+        return { error: "Lỗi cấu hình: API Key cho dịch vụ AI không hợp lệ hoặc đã hết hạn. Vui lòng liên hệ quản trị viên." };
     }
     return { error: "Xin lỗi, tôi đã gặp sự cố kỹ thuật khi trích xuất dữ liệu. Phản hồi của AI có thể không hợp lệ. Vui lòng thử diễn đạt lại yêu cầu của bạn." };
   }
@@ -102,7 +98,7 @@ export async function getGeneralResponse(userInput: string): Promise<{ text: str
         console.error("Lỗi khi gọi Gemini API cho phản hồi chung:", err);
         const errorMessage = err instanceof Error ? err.message : String(err);
         if (errorMessage.includes("API_KEY")) {
-            return { text: "Lỗi cấu hình: API Key cho dịch vụ AI chưa được thiết lập. Vui lòng liên hệ quản trị viên để khắc phục sự cố này.", sources: [] };
+            return { text: "Lỗi cấu hình: API Key cho dịch vụ AI không hợp lệ hoặc đã hết hạn. Vui lòng liên hệ quản trị viên để khắc phục sự cố này.", sources: [] };
         }
         return { text: "Xin lỗi, tôi không thể xử lý yêu cầu của bạn lúc này. Vui lòng thử lại sau.", sources: [] };
     }
